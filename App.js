@@ -4,6 +4,7 @@ import { SafeAreaView, StyleSheet, Text, View } from 'react-native';
 import Constants from "expo-constants";
 import Slider from '@react-native-community/slider';
 import * as MediaLibrary from 'expo-media-library';
+import MusicInfo from 'expo-music-info';
 
 import Deck from "./app/components/Deck";
 let meh = true;
@@ -28,15 +29,32 @@ export default class App extends Component {
     this.setState({
       userTunes: filteredMedia
     })
+    this.updateTuneData()
   }
 
+  async updateTuneData() {
+    for (let i = 0; i < this.state.userTunes.length; i++) {
+        await this.getTuneTitleAndArtist(i);
+    }
+  }
 
+  async getTuneTitleAndArtist(i) {
+      let tune = this.state.userTunes[i];
+      const metadata = await MusicInfo.getMusicInfoAsync(tune.uri, {
+          title: true,
+          artist: true,
+      });
+      let array = [...this.state.userTunes];
+      array[i].metadata = metadata;
+      this.setState({
+          userTunes: array
+      })
+  }
 
   async componentDidMount() {
     let { status } = await MediaLibrary.requestPermissionsAsync();
     //ADD CODE FOR IF THEY REFUSE PERMISSIONS
     this.getTunes();
-
   }
 
   androidStatusBarPadding = () => {

@@ -2,7 +2,7 @@ import React, { Component } from "react";
 import { StyleSheet, View, Text, TouchableOpacity } from "react-native";
 import { AntDesign, SimpleLineIcons } from '@expo/vector-icons';
 import Slider from '@react-native-community/slider';
-import MusicInfo from 'expo-music-info';
+import { Audio } from 'expo-av';
 
 import Waveform from "./Waveform";
 import SelectTune from "./SelectTune";
@@ -14,7 +14,11 @@ class Deck extends Component {
         song: "",
         userTunes: this.props.userTunes,
         selectTuneEnabled: false,
-        tuneData: []
+        isPlaying: false,
+        playbackInstance: null,
+        volume: 1.0,
+        isBuffering: false,
+        pitchControl: 1,
     }
 
     static getDerivedStateFromProps = (newProps, oldProps) => {
@@ -26,7 +30,63 @@ class Deck extends Component {
           return null;
         }
       }
-    
+
+    playbackInstance = null;
+
+
+    async componentDidMount() {
+        try {
+          await Audio.setAudioModeAsync({
+            allowsRecordingIOS: false,
+            interruptionModeIOS: Audio.INTERRUPTION_MODE_IOS_DO_NOT_MIX,
+            playsInSilentModeIOS: true,
+            interruptionModeAndroid: Audio.INTERRUPTION_MODE_ANDROID_DUCK_OTHERS,
+            shouldDuckAndroid: true,
+            staysActiveInBackground: true,
+            playThroughEarpieceAndroid: true
+          })
+        } catch (e) {
+          console.log(e)
+        }
+      }
+
+
+    async loadAudio(uri) {
+        this.setState({
+            pitchControl: 1,
+        })
+        const {pitchControl, volume} = this.state;
+        try {
+                const playbackInstance = new Audio.Sound()
+                const source = {
+                    uri: uri
+            }
+        
+            const status = {
+                shouldPlay: false,
+                volume: volume,
+                rate: pitchControl,
+                shouldCorrectPitch: false,
+                isMuted: false
+            }
+        
+            playbackInstance.setOnPlaybackStatusUpdate(this.onPlaybackStatusUpdate)     
+            await playbackInstance.loadAsync(source, status, false)
+            this.setState({
+                playbackInstance: playbackInstance,
+                isPlaying: false,
+            })
+            } catch (e) {
+            console.log(e)
+        }
+    }
+
+    onPlaybackStatusUpdate = status => {
+        this.setState({
+            isBuffering: status.isBuffering
+        })
+    }
+
     loadTrack = () => {
         this.setState({
             selectTuneEnabled: true,
@@ -34,27 +94,71 @@ class Deck extends Component {
     }
 
     play = () => {
-
+        this.state.playbackInstance.playAsync();
+        this.setState({
+            isPlaying: true,
+        })
     }
 
     pause = () => {
-
-    }
-
-    nudge = () => {
-
-    }
-
-    speedChange = () => {
-
-    }
-
-    selectTrack = (artist, title, uri) => {
+        this.state.playbackInstance.pauseAsync();
         this.setState({
-            artist: artist,
-            song: title,
-            selectTuneEnabled: false,
+            isPlaying: false,
         })
+    }
+
+    nudgeUp = () => {
+        this.pitchUp();
+        setTimeout(() => {
+            this.pitchDown();
+        }, 50)
+    }
+
+    nudgeDown = () => {
+        this.pitchDown();
+        setTimeout(() => {
+            this.pitchUp();
+        }, 50)
+    }
+
+    pitchUp = () => {
+        let pitch = this.state.pitchControl;
+        let newPitch = pitch * 999/1000;
+        this.setState({
+            pitchControl: newPitch,
+        });
+        this.state.playbackInstance.setStatusAsync({
+            rate: newPitch,
+        })
+    }
+
+    pitchDown = () => {
+        let pitch = this.state.pitchControl;
+        let newPitch = (pitch * 1000/999);
+        this.setState({
+            pitchControl: newPitch,
+        });
+        this.state.playbackInstance.setStatusAsync({
+            rate: newPitch,
+        })
+    }
+
+    selectTrack = async (artist, title, uri) => {
+
+        if(this.state.isPlaying){
+            alert("Still playing track")
+        }else{
+            if(this.state.playbackInstance){
+                await this.state.playbackInstance.unloadAsync();
+            }
+            this.setState({
+                artist: artist,
+                song: title,
+                selectTuneEnabled: false,
+                playbackInstance: null,
+            })
+            this.loadAudio(uri)
+        }
     }
 
     render = () => {
@@ -69,7 +173,7 @@ class Deck extends Component {
                             {this.state.artist + " - " + this.state.song}
                         </Text>
                     </View>
-                    <SelectTune userTunes={this.state.userTunes} selectTrack={this.selectTrack}/>
+                    <SelectTune userTunes={this.state.userTunes} selectTuneEnabled={this.state.selectTuneEnabled} selectTrack={this.selectTrack}/>
                 </View>
             )
         }else{
@@ -109,25 +213,25 @@ class Deck extends Component {
                     </View>
     
                     <View style={[styles.Component, styles.mainElement, {flex: 1, flexDirection: "row"}]}>
-                        <TouchableOpacity style={{flex: 1}} onPress={() => this.nudge(-1)}>
+                        <TouchableOpacity style={{flex: 1}} onPress={this.nudgeDown}>
                             <View style={styles.playButton}>
                                 <SimpleLineIcons name="control-rewind" adjustsFontSizeToFit size={30} color={this.props.color} />
                             </View>
                         </TouchableOpacity>
                         <View style={{width: 10}} />
-                        <TouchableOpacity style={{flex: 1}} onPress={() => this.speedChange(-1)}>
+                        <TouchableOpacity style={{flex: 1}} onPress={this.pitchUp}>
                             <View style={styles.playButton}>
                                 <SimpleLineIcons name="minus" adjustsFontSizeToFit size={30} color={this.props.color} />
                             </View>
                         </TouchableOpacity>
                         <View style={{width: 10}} />
-                        <TouchableOpacity style={{flex: 1}} onPress={() => this.speedChange(1)}>
+                        <TouchableOpacity style={{flex: 1}} onPress={this.pitchDown}>
                             <View style={styles.playButton}>
                                 <SimpleLineIcons name="plus" adjustsFontSizeToFit size={30} color={this.props.color} />
                             </View>
                         </TouchableOpacity>
                         <View style={{width: 10}} />
-                        <TouchableOpacity style={{flex: 1}} onPress={() => this.nudge(1)}>
+                        <TouchableOpacity style={{flex: 1}} onPress={this.nudgeUp}>
                             <View style={styles.playButton}>
                                 <SimpleLineIcons name="control-forward" adjustsFontSizeToFit size={30} color={this.props.color} />
                             </View>
@@ -217,6 +321,7 @@ const styles = StyleSheet.create({
     title: {
         justifyContent: "center",
         alignItems: "center",
+        marginBottom: 15,
     },
     titleText: {
         fontSize: 15,   

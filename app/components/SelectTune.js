@@ -1,8 +1,5 @@
 import React, { Component } from "react";
 import { StyleSheet, View, Text, ScrollView, TouchableOpacity } from "react-native";
-import MusicInfo from 'expo-music-info';
-
-const jsmediatags = require('jsmediatags');
 
 class SelectTune extends Component {
 
@@ -11,7 +8,7 @@ class SelectTune extends Component {
     }
 
     static getDerivedStateFromProps = (newProps, oldProps) => {
-        if(oldProps.userTunes !== newProps.userTunes){
+        if((oldProps.userTunes !== newProps.userTunes)){
           return {
             userTunes: newProps.userTunes,
           }
@@ -19,54 +16,6 @@ class SelectTune extends Component {
           return null;
         }
       }
-
-    updateTuneData() {
-        for (let i = 0; i < this.state.userTunes.length; i++) {
-            //this.getTuneTitleAndArtist(i);
-            this.blah(i)
-        }
-      }
-
-    blah = (i) => {
-        let tune = this.state.userTunes[i];
-        new Promise((resolve, reject) => {
-            new jsmediatags.Reader(tune.uri)
-              .read({
-                onSuccess: (tag) => {
-                  console.log('Success!');
-
-                },
-                onError: (error) => {
-                  console.log('Error');
-
-                }
-            });
-          })
-            .then(tagInfo => {
-              console.log(tagInfo)
-            })
-            .catch(error => {
-                console.log(error)
-            });
-    }
-    
-    // async getTuneTitleAndArtist(i) {
-    //     let tune = this.state.userTunes[i];
-    //     const metadata = await MusicInfo.getMusicInfoAsync(tune.uri, {
-    //         title: true,
-    //         artist: true,
-    //     });
-    //     let array = [...this.state.userTunes];
-    //     array[i].metadata = metadata;
-    //     this.setState({
-    //         userTunes: array
-    //     })
-
-    // }
-
-    componentDidMount = () => {
-        this.updateTuneData();
-    }
 
     getTuneData = () => {
         let array = [];

@@ -10,8 +10,8 @@ import SelectTune from "./SelectTune";
 class Deck extends Component {
 
     state = {
-        artist: "",
-        song: "",
+        artist: "Deck Empty",
+        song: "Nothing Loaded",
         userTunes: this.props.userTunes,
         selectTuneEnabled: false,
         isPlaying: false,
@@ -20,6 +20,7 @@ class Deck extends Component {
         isBuffering: false,
         pitchControl: 1,
         displayPitch: 1,
+        uri: null,
         iconShadow: {
             textShadowColor: this.props.color,
             textShadowRadius: 1,
@@ -173,6 +174,7 @@ class Deck extends Component {
                 pitchControl: 1,
                 displayPitch: 1,
                 selectTuneEnabled: false,
+                uri: uri,
             })
             this.loadAudio(uri)
         }
@@ -231,7 +233,9 @@ class Deck extends Component {
                     </View>
 
                     <View style={[styles.Component, styles.mainElement, { flex: 1 }]}>
-                        <Waveform></Waveform>
+                        <Waveform 
+                            uri={this.state.uri}
+                        />
                     </View>
 
                     <View style={[styles.Component, styles.mainElement, { flex: 1, flexDirection: "row" }]}>

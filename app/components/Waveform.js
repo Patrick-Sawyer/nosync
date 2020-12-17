@@ -1,14 +1,29 @@
 import React, { Component } from "react";
-import { StyleSheet, View, Text } from "react-native";
+import { StyleSheet, View } from "react-native";
+import * as FileSystem from 'expo-file-system';
 
 class Waveform extends Component {
 
     state = {
-        uri: this.props.uri,
+        uri: null,
     }
 
     componentDidMount = () => {
-    
+
+        // setTimeout(async () => {
+        //     console.log(this.state.uri)
+        //     if(this.state.uri != null){
+        //         const audioFileAsString = await FileSystem.readAsStringAsync(this.state.uri , {
+        //             encoding: FileSystem.EncodingType.UTF8,
+        //        });
+
+        //         // let first = fileBase64.substring(0,10000)
+        //         let json = JSON.stringify(audioFileAsString)
+        //         console.log(json)
+
+        //     }
+        // }, 5000)
+
     }
 
     static getDerivedStateFromProps = (newProps, oldProps) => {

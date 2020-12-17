@@ -16,7 +16,7 @@ class Deck extends Component {
         selectTuneEnabled: false,
         isPlaying: false,
         playbackInstance: null,
-        volume: 1.0,
+        volume: this.props.volume,
         isBuffering: false,
         pitchControl: 1,
         displayPitch: 1,
@@ -28,23 +28,30 @@ class Deck extends Component {
     }
 
     upDatevolume = (newVolume) => {
+        if (this.state.playbackInstance != null) {
+            console.log(newVolume)
+            this.state.playbackInstance.setStatusAsync({
+                volume: parseFloat(newVolume),
+            })
+        }
         this.setState({
             volume: newVolume,
         });
-        if (this.state.playbackInstance != null) {
-            this.state.playbackInstance.setStatusAsync({
-                volume: newVolume,
-            })
-        }
     }
 
-    static getDerivedStateFromProps = (newProps, oldProps) => {
-        if (oldProps.userTunes !== newProps.userTunes) {
-            return {
-                userTunes: newProps.userTunes,
-            }
-        } else {
-            return null;
+    // static getDerivedStateFromProps = (newProps, oldProps) => {
+    //     if (oldProps.userTunes !== newProps.userTunes) {
+    //         return {
+    //             userTunes: newProps.userTunes,
+    //         }
+    //     } else {
+    //         return null;
+    //     }
+    // }
+
+    componentDidUpdate = (prevProps) => {
+        if (this.props.volume !== prevProps.volume) {
+            this.upDatevolume(this.props.volume)
         }
     }
 
@@ -169,7 +176,6 @@ class Deck extends Component {
                 song: title,
                 isPlaying: false,
                 playbackInstance: null,
-                volume: 1.0,
                 isBuffering: false,
                 pitchControl: 1,
                 displayPitch: 1,

@@ -20,6 +20,10 @@ class Deck extends Component {
         isBuffering: false,
         pitchControl: 1,
         displayPitch: 1,
+        iconShadow: {
+            textShadowColor: this.props.color,
+            textShadowRadius: 1,
+        }
     }
 
     upDatevolume = (newVolume) => {
@@ -141,7 +145,6 @@ class Deck extends Component {
 
     getPitchAsPercentage = () => {
         let value = "";
-        console.log(this.state.displayPitch)
         if(this.state.displayPitch > 1){
             value = "+";
         }
@@ -178,8 +181,8 @@ class Deck extends Component {
     playButtonTemplate = (name, onpress) => {
         return (
             <TouchableOpacity style={{ flex: 1 }} onPress={onpress}>
-                <View style={styles.playButton}>
-                    <SimpleLineIcons name={name} adjustsFontSizeToFit size={30} color={this.props.color} />
+                <View style={[styles.playButton, {borderColor: this.props.buttonColor}]}>
+                    <SimpleLineIcons name={name} adjustsFontSizeToFit size={30} color={this.props.color} style={this.state.iconShadow}/>
                 </View>
             </TouchableOpacity>
         )
@@ -206,13 +209,13 @@ class Deck extends Component {
                 <View style={styles.container}>
                     <View style={styles.title}>
                         <Text
-                            style={[styles.titleText, { color: this.props.color }]}
+                            style={[styles.titleText, {color: this.props.color}, this.state.iconShadow]}
                             numberOfLines={1}
                         >
                             {this.state.artist + " - " + this.state.song}
                         </Text>
                     </View>
-                    <SelectTune userTunes={this.state.userTunes} selectTuneEnabled={this.state.selectTuneEnabled} selectTrack={this.selectTrack} />
+                    <SelectTune userTunes={this.state.userTunes} color={this.props.color} selectTuneEnabled={this.state.selectTuneEnabled} selectTrack={this.selectTrack} />
                 </View>
             )
         } else {
@@ -220,7 +223,7 @@ class Deck extends Component {
                 <View style={styles.container}>
                     <View style={styles.title}>
                         <Text
-                            style={[styles.titleText, { color: this.props.color }]}
+                            style={[styles.titleText, { color: this.props.color, textShadowColor: this.props.color, textShadowRadius: 1 }]}
                             numberOfLines={1}
                         >
                             {this.state.artist + " - " + this.state.song}
@@ -240,13 +243,15 @@ class Deck extends Component {
                                 }
                             }}
                         >
-                            <View style={[styles.playButton, { padding: 0 }]}>
+                            <View style={[styles.playButton, { padding: 0, borderColor: this.props.buttonColor }]}>
                                 <Text
                                     adjustsFontSizeToFit
                                     numberOfLines={1}
                                     style={{
                                         fontSize: 30,
-                                        color: this.props.color
+                                        color: this.props.color,
+                                        textShadowColor: this.props.color,
+                                        textShadowRadius: 1,
                                     }}
                                 >CUE</Text>
                             </View>
@@ -255,8 +260,13 @@ class Deck extends Component {
                         {this.playButton()}
                         <View style={{ width: 10 }} />
                         <TouchableOpacity style={{ flex: 1 }} onPress={this.loadTrack}>
-                            <View style={styles.playButton}>
-                                <AntDesign name="addfile" adjustsFontSizeToFit size={30} color={this.props.color} />
+                            <View style={[styles.playButton, {borderColor: this.props.buttonColor}]}>
+                                <AntDesign 
+                                    name="addfile" 
+                                    adjustsFontSizeToFit size={30} 
+                                    color={this.props.color} 
+                                    style={this.state.iconShadow}
+                                />
                             </View>
                         </TouchableOpacity>
                     </View>
@@ -282,16 +292,13 @@ class Deck extends Component {
                             }}
 
                         >
-                            <View style={styles.playButton}>
-                                <SimpleLineIcons name="minus" adjustsFontSizeToFit size={30} color={this.props.color} />
+                            <View style={[styles.playButton, {borderColor: this.props.buttonColor}]}>
+                                <SimpleLineIcons name="minus" adjustsFontSizeToFit size={30} color={this.props.color} style={this.state.iconShadow} />
                             </View>
                         </TouchableOpacity>
                         <View style={{ width: 10 }} />
                         <View style={{ width: 50, alignItems: "center" }}>
-                            <Text adjustsFontSizeToFit numberOfLines={1} style={{ color: this.props.color, textAlign: "center" }}>
-                                {"Pitch:"}
-                            </Text>
-                            <Text adjustsFontSizeToFit numberOfLines={1} style={{ color: this.props.color, textAlign: "center" }}>
+                            <Text adjustsFontSizeToFit numberOfLines={1} style={{ color: "grey", fontSize: 15}}>
                                 {this.getPitchAsPercentage()}
                             </Text>
                         </View>
@@ -316,48 +323,55 @@ class Deck extends Component {
                                 }
                             }}
                         >
-                            <View style={styles.playButton}>
-                                <SimpleLineIcons name="plus" adjustsFontSizeToFit size={30} color={this.props.color} />
+                            <View style={[styles.playButton, {borderColor: this.props.buttonColor}]}>
+                                <SimpleLineIcons name="plus" adjustsFontSizeToFit size={30} color={this.props.color} style={this.state.iconShadow}/>
                             </View>
                         </TouchableOpacity>
                     </View>
                     <View style={[styles.Component, styles.mainElement, { flex: 1, flexDirection: "row"}]}>
-                        <TouchableOpacity
-                            style={{ width: 30, height: "100%", justifyContent: "center", alignItems: "flex-start" }}
-                            onPressIn={() => this.nudgeTouch(-0.03)}
-                            onPressOut={() => this.nudgeTouch(0)}
-                        >
-                            <SimpleLineIcons name="arrow-left" adjustsFontSizeToFit size={30} color={this.props.color} />
-                        </TouchableOpacity>
+                        <View style={{width: "10%", alignItems: "flex-start"}}>
+                            <TouchableOpacity
+                                style={{ width: 30, height: "100%", justifyContent: "center", alignItems: "flex-start" }}
+                                onPressIn={() => this.nudgeTouch(-0.03)}
+                                onPressOut={() => this.nudgeTouch(0)}
+                            >
+                                <SimpleLineIcons name="arrow-left" adjustsFontSizeToFit size={27} color={this.props.color} style={this.state.iconShadow}/>
+                            </TouchableOpacity>
+                        </View>
                         <Slider
                             style={{ height: 20, flexGrow: 1 }}
                             minimumValue={0.92}
                             maximumValue={1.08}
                             value={this.state.pitchControl}
-                            minimumTrackTintColor={this.props.color}
-                            maximumTrackTintColor={"#e3e3e3"}
+                            minimumTrackTintColor={"rgba(0,0,0,0)"}
+                            maximumTrackTintColor={"grey"}
                             onSlidingComplete={(value) => {
                                 this.pitchSliderValueChange(value)
                             }}
                             onValueChange={(value) => {
+                                this.pitchSliderValueChange(value);
                                 this.setState({
-                                    displayPitch: value
+                                    displayPitch: value,
                                 })
                             }}
+
                             thumbTintColor={this.props.color}
+                            thumbImage={this.props.color == "#00f2ff" ? require("../images/circleTurquoise.png") : require("../images/circleOrange.png") }
                         />
-                        <TouchableOpacity
-                            style={{ width: 30, height: "100%", justifyContent: "center", alignItems: "flex-end" }}
-                            onPressIn={() => this.nudgeTouch(0.03)}
-                            onPressOut={() => this.nudgeTouch(0)}
-                        >
-                            <SimpleLineIcons name="arrow-right" adjustsFontSizeToFit size={30} color={this.props.color} />
-                        </TouchableOpacity>
+                        <View style={{width: "10%", alignItems: "flex-end"}}>
+                            <TouchableOpacity
+                                style={{ width: 30, height: "100%", justifyContent: "center", alignItems: "flex-end" }}
+                                onPressIn={() => this.nudgeTouch(0.03)}
+                                onPressOut={() => this.nudgeTouch(0)}
+                            >
+                                <SimpleLineIcons name="arrow-right" adjustsFontSizeToFit size={27} color={this.props.color} style={this.state.iconShadow} />
+                            </TouchableOpacity>
+                        </View>
                     </View>
                     <View style={[styles.Component, styles.mainElement, { flex: 1, flexDirection: "row" }]}>
                         <View style={styles.eqComponent}>
                             <View style={styles.eqTextContainer}>
-                                <Text style={[styles.eqText, { color: this.props.color }]}>
+                                <Text style={styles.eqText}>
                                     Low
                                 </Text>
                             </View>
@@ -367,15 +381,15 @@ class Deck extends Component {
                                     minimumValue={0}
                                     maximumValue={1}
                                     value={1}
-                                    minimumTrackTintColor={this.props.color}
-                                    maximumTrackTintColor="#e3e3e3"
+                                    minimumTrackTintColor={"rgba(0,0,0,0)"}
+                                    maximumTrackTintColor={"grey"}
                                     thumbTintColor={this.props.color}
                                 />
                             </View>
                         </View>
                         <View style={styles.eqComponent}>
                             <View style={styles.eqTextContainer}>
-                                <Text style={[styles.eqText, { color: this.props.color }]}>
+                            <Text style={styles.eqText}>
                                     Mid
                                 </Text>
                             </View>
@@ -385,15 +399,15 @@ class Deck extends Component {
                                     minimumValue={0}
                                     maximumValue={1}
                                     value={1}
-                                    minimumTrackTintColor={this.props.color}
-                                    maximumTrackTintColor="#e3e3e3"
+                                    minimumTrackTintColor={"rgba(0,0,0,0)"}
+                                    maximumTrackTintColor={"grey"}
                                     thumbTintColor={this.props.color}
                                 />
                             </View>
                         </View>
                         <View style={styles.eqComponent}>
                             <View style={styles.eqTextContainer}>
-                                <Text style={[styles.eqText, { color: this.props.color }]}>
+                                <Text style={styles.eqText}>
                                     Hi
                                 </Text>
                             </View>
@@ -403,8 +417,8 @@ class Deck extends Component {
                                     minimumValue={0}
                                     maximumValue={1}
                                     value={1}
-                                    minimumTrackTintColor={this.props.color}
-                                    maximumTrackTintColor="#e3e3e3"
+                                    minimumTrackTintColor={"rgba(0,0,0,0)"}
+                                    maximumTrackTintColor={"grey"}
                                     thumbTintColor={this.props.color}
                                 />
                             </View>
@@ -450,7 +464,6 @@ const styles = StyleSheet.create({
         padding: 5,
         borderWidth: 1,
         borderRadius: 15,
-        borderColor: "#e3e3e3"
     },
     eqComponent: {
         flex: 1,
@@ -459,7 +472,8 @@ const styles = StyleSheet.create({
         flexDirection: "column",
     },
     eqText: {
-        opacity: 0.5,
+        color: "grey",
+        fontSize: 15,
     },
     eqSlider: {
         width: "100%",

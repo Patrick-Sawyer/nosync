@@ -5,6 +5,11 @@ class SelectTune extends Component {
 
     state = {
         userTunes: this.props.tuneData,
+        textStyle: {
+            color: this.props.color,
+            textShadowColor: this.props.color,
+            textShadowRadius: 0.5,
+        }
     }
 
     static getDerivedStateFromProps = (newProps, oldProps) => {
@@ -38,7 +43,7 @@ class SelectTune extends Component {
                 if(title.length > 0){
                     return (
                         <View style={[styles.data, {flex: 1.65}]}>
-                            <Text numberOfLines={1}>{title}</Text>
+                            <Text style={this.state.textStyle} numberOfLines={1}>{title}</Text>
                         </View>
                     )
                 }
@@ -49,7 +54,7 @@ class SelectTune extends Component {
                 }}>
                     <View style={styles.tune}>
                         <View style={[styles.data, {flex: 1}]}>
-                            <Text numberOfLines={1}>{artist}</Text>
+                            <Text style={this.state.textStyle} numberOfLines={1}>{artist}</Text>
                         </View>
                         {titleComponent()}
                     </View>

@@ -14,6 +14,8 @@ export default class App extends Component {
 
   state = {
     userTunes: [],
+    deckAVolume: 0.70,
+    deckBVolume: 0.70,
   }
 
   async getTunes(lastId) {
@@ -62,7 +64,6 @@ export default class App extends Component {
       <View
         style={{
           height: Constants.statusBarHeight,
-          // backgroundColor: Colors.grey1,
           }}
       ></View>
     )
@@ -80,11 +81,11 @@ export default class App extends Component {
         <React.Fragment>
           {this.lineBreak()}
           <View style={[styles.deck, styles.component]}>
-            <Deck color={"#9e6737"} userTunes={this.state.userTunes} />  
+            <Deck color={"#9e6737"} userTunes={this.state.userTunes} volume={this.state.deckAVolume}/>  
           </View>
           {this.lineBreak()}
           <View style={[styles.deck, styles.component]}>
-            <Deck color={"#348185"} userTunes={this.state.userTunes} />
+            <Deck color={"#348185"} userTunes={this.state.userTunes} volume={this.state.deckBVolume}/>
           </View>
           {this.lineBreak()}
           <View style={[styles.component, styles.crossfadeContainer]}>
@@ -101,6 +102,12 @@ export default class App extends Component {
                   maximumTrackTintColor="#bd865c"
                   minimumTrackTintColor="#bd865c"
                   thumbTintColor={"#a65e28"}
+                  onValueChange={(value) => {
+                    this.logarithmicCrossfade(value)
+                  }}
+                  onSlidingComplete={(value) => {
+                    this.logarithmicCrossfade(value)
+                  }}
                 />
               </View>
             </View>
@@ -114,6 +121,16 @@ export default class App extends Component {
         </Text>
       )
     }
+  }
+
+  logarithmicCrossfade = (value) => {
+    let angle = (value + 1) * (0.25 * Math.PI.toFixed(4));
+    this.setState({
+      deckAVolume: (value == 1) ? 0 : Math.cos(angle).toFixed(2),
+      deckBVolume: (value == -1) ? 0 : Math.sin(angle).toFixed(2),
+    })
+    console.log("DECK A: " + this.state.deckAVolume);
+    console.log("DECK B: " + this.state.deckBVolume);
   }
 
   render = () => {

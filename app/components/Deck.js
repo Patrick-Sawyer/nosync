@@ -211,19 +211,17 @@ class Deck extends Component {
         }
     }
 
+    backToDeck = () => {
+        this.setState({
+            selectTuneEnabled: false,
+        })
+    }
+
     render = () => {
         if (this.state.selectTuneEnabled) {
             return (
                 <View style={styles.container}>
-                    <View style={styles.title}>
-                        <Text
-                            style={[styles.titleText, {color: this.props.color}, this.state.iconShadow]}
-                            numberOfLines={1}
-                        >
-                            {this.state.artist + " - " + this.state.song}
-                        </Text>
-                    </View>
-                    <SelectTune userTunes={this.state.userTunes} color={this.props.color} selectTuneEnabled={this.state.selectTuneEnabled} selectTrack={this.selectTrack} />
+                    <SelectTune userTunes={this.state.userTunes} color={this.props.color} selectTuneEnabled={this.state.selectTuneEnabled} goBack={this.backToDeck} selectTrack={this.selectTrack} />
                 </View>
             )
         } else {

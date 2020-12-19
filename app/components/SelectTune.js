@@ -22,8 +22,20 @@ class SelectTune extends Component {
         }
       }
 
+    backButton = () => {
+        return (
+            <TouchableOpacity key={"back-button"} onPress={this.props.goBack}>
+
+                    <View style={[styles.data, {flex: 1, alignItems: "center" }]}>
+                        <Text style={this.state.textStyle} numberOfLines={1}>Click to go back</Text>
+                    </View>
+
+            </TouchableOpacity>
+        )
+    }
+
     getTuneData = () => {
-        let array = [];
+        let array = [this.backButton()];
         this.state.userTunes.forEach((tune, index) => {
             let artist = tune.filename;
             let title = "";

@@ -76,7 +76,8 @@ export default class App extends Component {
   }
 
   loadingTest = () => {
-    if(this.state.userTunes.length > 0){
+    // if(this.state.userTunes.length > 0){
+      if(true){
       return (
         <React.Fragment>
           <View style={styles.component}>

@@ -10,8 +10,8 @@ import SelectTune from "./SelectTune";
 class Deck extends Component {
 
     state = {
-        artist: "Deck Empty",
-        song: "Nothing Loaded",
+        artist: "Deck empty",
+        song: "Click to load tune",
         userTunes: this.props.userTunes,
         selectTuneEnabled: false,
         isPlaying: false,
@@ -29,7 +29,6 @@ class Deck extends Component {
 
     upDatevolume = (newVolume) => {
         if (this.state.playbackInstance != null) {
-            console.log(newVolume)
             this.state.playbackInstance.setStatusAsync({
                 volume: parseFloat(newVolume),
             })
@@ -42,6 +41,10 @@ class Deck extends Component {
     componentDidUpdate = (prevProps) => {
         if (this.props.volume !== prevProps.volume) {
             this.upDatevolume(this.props.volume)
+        }else if(this.props.userTunes !== prevProps.userTunes){
+            this.setState({
+                userTunes: this.props.userTunes
+            })
         }
     }
 
@@ -99,13 +102,11 @@ class Deck extends Component {
     }
 
     loadTrack = () => {
-        if(this.state.userTunes.length > 0){
+
             this.setState({
                 selectTuneEnabled: true,
             })
-        }else{
-            Alert.alert("No tunes loaded", "Please ensure permissions are enabled for this app")
-        }
+
     }
 
     play = () => {
@@ -157,7 +158,7 @@ class Deck extends Component {
     selectTrack = async (artist, title, uri) => {
 
         if (this.state.isPlaying) {
-            Alert.alert("Still playing tune", "You cannot load a tune whilst another one is still playing")
+            Alert.alert("Deck already in use", "You cannot load a tune whilst another one is still playing")
             this.setState({
                 selectTuneEnabled: false,
             })
@@ -342,7 +343,7 @@ class Deck extends Component {
                                 <SimpleLineIcons name="arrow-left" adjustsFontSizeToFit size={27} color={this.props.color} style={this.state.iconShadow}/>
                             </TouchableOpacity>
                         </View>
-                        <View style={{flexDirection: "column", flexGrow: 1, width: "100%", maxWidth: 450}}>
+                        <View style={{flexDirection: "column", flexGrow: 1, maxWidth: 450}}>
                             <View style={{flexGrow: 1, width: "100%", justifyContent: "center", zIndex: 2 }}>
                             <Slider
                                 style={{ height: 20, flexGrow: 1 }}
@@ -366,7 +367,7 @@ class Deck extends Component {
                             />
                             </View>
                             <View style={{flexGrow: 1, width: "100%", justifyContent: "center", position: "absolute", top: 0, bottom: 0, left: 0, right: 0, alignItems: "center", paddingHorizontal: 16}}>
-                                <View style={{height: 4, borderRadius: 1, width: "100%", zIndex: 0, backgroundColor: "grey"}} />
+                                <View style={{height:  Platform.OS == "ios" ? 4 : 2, width: "100%", zIndex: 0, backgroundColor: "grey"}} />
                             </View>
                         </View>
                         <View style={{width: "10%", alignItems: "flex-end"}}>

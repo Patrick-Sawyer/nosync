@@ -25,7 +25,8 @@ export default class App extends Component {
       mediaType: MediaLibrary.MediaType.audio,
       first: 1000,
     })
-    console.log(media);
+    console.log(Platform.OS)
+    console.log(media)
     let filteredMedia = media.assets.filter((tune) => {
       if(tune.duration > 60){
         return true;
@@ -122,7 +123,7 @@ export default class App extends Component {
                 />
               </View>
               <View style={{flexGrow: 1, width: "100%", justifyContent: "center", position: "absolute", top: 0, bottom: 0, left: 0, right: 0, alignItems: "center", paddingHorizontal: 16}}>
-                  <View style={{height: 4, borderRadius: 1, width: "100%", zIndex: 0, backgroundColor: "grey" }} />
+                  <View style={{height: Platform.OS == "ios" ? 4 : 2, width: "100%", zIndex: 0, backgroundColor: "grey" }} />
               </View>
             </View>
           </View>

@@ -58,7 +58,6 @@ export default class App extends Component {
 
   async componentDidMount() {
     let { status } = await MediaLibrary.requestPermissionsAsync();
-    //ADD CODE FOR IF THEY REFUSE PERMISSIONS
     this.getTunes();
   }
 
@@ -81,71 +80,55 @@ export default class App extends Component {
   }
 
   loadingTest = () => {
-    // if(this.state.userTunes.length > 0){
-      if(true){
-      return (
-        <React.Fragment>
-          <View style={styles.component}>
-            <Text style={[styles.titleText, {fontSize: 40}]} numberOfLines={1} adjustsFontSizeToFit>
-              NoSync
-            </Text>
-          </View>
-          {this.lineBreak()}
-          <View style={[styles.deck, styles.component]}>
-            <Deck color={colors[1]} buttonColor={colors[3]} userTunes={this.state.userTunes} volume={this.state.deckAVolume}/>  
-          </View>
-          {this.lineBreak()}
-          <View style={[styles.deck, styles.component]}>
-            <Deck color={colors[0]} buttonColor={colors[3]} userTunes={this.state.userTunes} volume={this.state.deckBVolume}/>
-          </View>
-          {this.lineBreak()}
-          <View style={[styles.component, styles.crossfadeContainer]}>
-            <View style={styles.crossfade}>
-              <View style={{flexShrink: 1}}>
-                <Text style={{textAlign: "center", color: "grey", fontSize: 15}}>X-Fade</Text>
+    return (
+      <React.Fragment>
+        <View style={styles.component}>
+          <Text style={[styles.titleText, {fontSize: 40}]} numberOfLines={1} adjustsFontSizeToFit>
+            NoSync
+          </Text>
+        </View>
+        {this.lineBreak()}
+        <View style={[styles.deck, styles.component]}>
+          <Deck color={colors[1]} buttonColor={colors[3]} userTunes={this.state.userTunes} volume={this.state.deckAVolume}/>  
+        </View>
+        {this.lineBreak()}
+        <View style={[styles.deck, styles.component]}>
+          <Deck color={colors[0]} buttonColor={colors[3]} userTunes={this.state.userTunes} volume={this.state.deckBVolume}/>
+        </View>
+        {this.lineBreak()}
+        <View style={[styles.component, styles.crossfadeContainer]}>
+          <View style={styles.crossfade}>
+            <View style={{flexShrink: 1}}>
+              <Text style={{textAlign: "center", color: "grey", fontSize: 15}}>X-Fade</Text>
+            </View>
+            <View style={{flexDirection: "column", flexGrow: 1, width: "100%", maxWidth: 450}}>
+              <View style={{flexGrow: 1, width: "100%", justifyContent: "center", zIndex: 2 }}>
+                <Slider
+                  style={{width: "100%", height: 20}}
+                  minimumValue={-1}
+                  maximumValue={1}
+                  value={0}
+                  minimumTrackTintColor={"rgba(0,0,0,0)"}
+                  maximumTrackTintColor={"rgba(0,0,0,0)"}
+                  thumbTintColor={colors[1]}
+                  onValueChange={(value) => {
+                      this.logarithmicCrossfade(value)
+                    
+                  }}
+                  onSlidingComplete={(value) => {
+                    this.logarithmicCrossfade(value);
+                  }}
+                  thumbImage={require("./app/images/circleOrange.png")}
+                />
               </View>
-              <View style={{flexDirection: "column", flexGrow: 1, width: "100%"}}>
-                <View style={{flexGrow: 1, width: "100%", justifyContent: "center", zIndex: 2 }}>
-                  <Slider
-                    style={{width: "100%", height: 20}}
-                    minimumValue={-1}
-                    maximumValue={1}
-                    value={0}
-                    minimumTrackTintColor={"rgba(0,0,0,0)"}
-                    maximumTrackTintColor={"rgba(0,0,0,0)"}
-                    thumbTintColor={colors[1]}
-                    onValueChange={(value) => {
-                        this.logarithmicCrossfade(value)
-                      
-                    }}
-                    onSlidingComplete={(value) => {
-                      this.logarithmicCrossfade(value);
-                    }}
-                    thumbImage={require("./app/images/circleOrange.png")}
-                  />
-                </View>
-                <View style={{flexGrow: 1, width: "100%", justifyContent: "center", position: "absolute", top: 0, bottom: 0, left: 0, right: 0, alignItems: "center", paddingHorizontal: 16}}>
-                    <View style={{height: 4, borderRadius: 1, width: "100%", zIndex: 0, backgroundColor: "grey" }} />
-                </View>
+              <View style={{flexGrow: 1, width: "100%", justifyContent: "center", position: "absolute", top: 0, bottom: 0, left: 0, right: 0, alignItems: "center", paddingHorizontal: 16}}>
+                  <View style={{height: 4, borderRadius: 1, width: "100%", zIndex: 0, backgroundColor: "grey" }} />
               </View>
             </View>
           </View>
-        </React.Fragment>
-      )
-    }else{
-      return (
-        <View style={{width: "100%", alignItems: "center", justifyContent: "center"}}>
-          <View style={styles.component}>
-            <Text style={styles.titleText} numberOfLines={1} adjustsFontSizeToFit>
-              NoSync
-            </Text>
-          </View>
-          <Text style={{paddingTop: 20, color: "grey"}}>
-            Loading your music library...
-          </Text>
         </View>
-      )
-    }
+      </React.Fragment>
+    )
   }
 
   logarithmicCrossfade = (value) => {

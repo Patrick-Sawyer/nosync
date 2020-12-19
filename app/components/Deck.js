@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { StyleSheet, View, Text, TouchableOpacity, Platform } from "react-native";
+import { StyleSheet, View, Text, TouchableOpacity, Platform, Alert } from "react-native";
 import { AntDesign, SimpleLineIcons } from '@expo/vector-icons';
 import Slider from '@react-native-community/slider';
 import { Audio } from 'expo-av';
@@ -38,16 +38,6 @@ class Deck extends Component {
             volume: newVolume,
         });
     }
-
-    // static getDerivedStateFromProps = (newProps, oldProps) => {
-    //     if (oldProps.userTunes !== newProps.userTunes) {
-    //         return {
-    //             userTunes: newProps.userTunes,
-    //         }
-    //     } else {
-    //         return null;
-    //     }
-    // }
 
     componentDidUpdate = (prevProps) => {
         if (this.props.volume !== prevProps.volume) {
@@ -109,9 +99,13 @@ class Deck extends Component {
     }
 
     loadTrack = () => {
-        this.setState({
-            selectTuneEnabled: true,
-        })
+        if(this.state.userTunes.length > 0){
+            this.setState({
+                selectTuneEnabled: true,
+            })
+        }else{
+            Alert.alert("No tunes loaded", "Please ensure permissions are enabled for this app")
+        }
     }
 
     play = () => {
@@ -163,7 +157,7 @@ class Deck extends Component {
     selectTrack = async (artist, title, uri) => {
 
         if (this.state.isPlaying) {
-            alert("Still playing track")
+            Alert.alert("Still playing tune", "You cannot load a tune whilst another one is still playing")
             this.setState({
                 selectTuneEnabled: false,
             })
@@ -348,27 +342,7 @@ class Deck extends Component {
                                 <SimpleLineIcons name="arrow-left" adjustsFontSizeToFit size={27} color={this.props.color} style={this.state.iconShadow}/>
                             </TouchableOpacity>
                         </View>
-                        {/* <Slider
-                            style={{ height: 20, flexGrow: 1 }}
-                            minimumValue={0.92}
-                            maximumValue={1.08}
-                            value={this.state.pitchControl}
-                            minimumTrackTintColor={"rgba(0,0,0,0)"}
-                            maximumTrackTintColor={"grey"}
-                            onSlidingComplete={(value) => {
-                                this.pitchSliderValueChange(value)
-                            }}
-                            onValueChange={(value) => {
-                                this.pitchSliderValueChange(value);
-                                this.setState({
-                                    displayPitch: value,
-                                })
-                            }}
-
-                            thumbTintColor={this.props.color}
-                            thumbImage={this.props.color == "#00f2ff" ? require("../images/circleTurquoise.png") : require("../images/circleOrange.png") }
-                        /> */}
-                        <View style={{flexDirection: "column", flexGrow: 1, width: "100%"}}>
+                        <View style={{flexDirection: "column", flexGrow: 1, width: "100%", maxWidth: 450}}>
                             <View style={{flexGrow: 1, width: "100%", justifyContent: "center", zIndex: 2 }}>
                             <Slider
                                 style={{ height: 20, flexGrow: 1 }}
@@ -515,6 +489,7 @@ const styles = StyleSheet.create({
     eqSlider: {
         width: "100%",
         paddingHorizontal: Platform.OS == "ios" ? 11: 0,
+        maxWidth: 150,
     },
     eqTextContainer: {
         margin: 10,

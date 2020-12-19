@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { StyleSheet, View, Text, TouchableOpacity } from "react-native";
+import { StyleSheet, View, Text, TouchableOpacity, Platform } from "react-native";
 import { AntDesign, SimpleLineIcons } from '@expo/vector-icons';
 import Slider from '@react-native-community/slider';
 import { Audio } from 'expo-av';
@@ -227,14 +227,16 @@ class Deck extends Component {
         } else {
             return (
                 <View style={styles.container}>
-                    <View style={styles.title}>
-                        <Text
-                            style={[styles.titleText, { color: this.props.color, textShadowColor: this.props.color, textShadowRadius: 1 }]}
-                            numberOfLines={1}
-                        >
-                            {this.state.artist + " - " + this.state.song}
-                        </Text>
-                    </View>
+                    <TouchableOpacity onPress={this.loadTrack}>
+                        <View style={styles.title}>
+                            <Text
+                                style={[styles.titleText, { color: this.props.color, textShadowColor: this.props.color, textShadowRadius: 1 }]}
+                                numberOfLines={1}
+                            >
+                                {this.state.artist + " - " + this.state.song}
+                            </Text>
+                        </View>
+                    </TouchableOpacity>
 
                     <View style={[styles.Component, styles.mainElement, { flex: 1 }]}>
                         <Waveform 
@@ -346,7 +348,7 @@ class Deck extends Component {
                                 <SimpleLineIcons name="arrow-left" adjustsFontSizeToFit size={27} color={this.props.color} style={this.state.iconShadow}/>
                             </TouchableOpacity>
                         </View>
-                        <Slider
+                        {/* <Slider
                             style={{ height: 20, flexGrow: 1 }}
                             minimumValue={0.92}
                             maximumValue={1.08}
@@ -365,7 +367,34 @@ class Deck extends Component {
 
                             thumbTintColor={this.props.color}
                             thumbImage={this.props.color == "#00f2ff" ? require("../images/circleTurquoise.png") : require("../images/circleOrange.png") }
-                        />
+                        /> */}
+                        <View style={{flexDirection: "column", flexGrow: 1, width: "100%"}}>
+                            <View style={{flexGrow: 1, width: "100%", justifyContent: "center", zIndex: 2 }}>
+                            <Slider
+                                style={{ height: 20, flexGrow: 1 }}
+                                minimumValue={0.92}
+                                maximumValue={1.08}
+                                value={this.state.pitchControl}
+                                minimumTrackTintColor={"rgba(0,0,0,0)"}
+                                maximumTrackTintColor={"rgba(0,0,0,0)"}
+                                onSlidingComplete={(value) => {
+                                    this.pitchSliderValueChange(value)
+                                }}
+                                onValueChange={(value) => {
+                                    this.pitchSliderValueChange(value);
+                                    this.setState({
+                                        displayPitch: value,
+                                    })
+                                }}
+    
+                                thumbTintColor={this.props.color}
+                                thumbImage={this.props.color == "#00f2ff" ? require("../images/circleTurquoise.png") : require("../images/circleOrange.png") }    
+                            />
+                            </View>
+                            <View style={{flexGrow: 1, width: "100%", justifyContent: "center", position: "absolute", top: 0, bottom: 0, left: 0, right: 0, alignItems: "center", paddingHorizontal: 16}}>
+                                <View style={{height: 4, borderRadius: 1, width: "100%", zIndex: 0, backgroundColor: "grey"}} />
+                            </View>
+                        </View>
                         <View style={{width: "10%", alignItems: "flex-end"}}>
                             <TouchableOpacity
                                 style={{ width: 30, height: "100%", justifyContent: "center", alignItems: "flex-end" }}
@@ -389,9 +418,9 @@ class Deck extends Component {
                                     minimumValue={0}
                                     maximumValue={1}
                                     value={1}
-                                    minimumTrackTintColor={"rgba(0,0,0,0)"}
+                                    minimumTrackTintColor={"grey"}
                                     maximumTrackTintColor={"grey"}
-                                    thumbTintColor={this.props.color}
+                                    thumbImage={this.props.color == "#00f2ff" ? require("../images/circleTurquoiseSmall.png") : require("../images/circleOrangeSmall.png") }
                                 />
                             </View>
                         </View>
@@ -407,9 +436,9 @@ class Deck extends Component {
                                     minimumValue={0}
                                     maximumValue={1}
                                     value={1}
-                                    minimumTrackTintColor={"rgba(0,0,0,0)"}
+                                    minimumTrackTintColor={"grey"}
                                     maximumTrackTintColor={"grey"}
-                                    thumbTintColor={this.props.color}
+                                    thumbImage={this.props.color == "#00f2ff" ? require("../images/circleTurquoiseSmall.png") : require("../images/circleOrangeSmall.png") }
                                 />
                             </View>
                         </View>
@@ -425,9 +454,9 @@ class Deck extends Component {
                                     minimumValue={0}
                                     maximumValue={1}
                                     value={1}
-                                    minimumTrackTintColor={"rgba(0,0,0,0)"}
+                                    minimumTrackTintColor={"grey"}
                                     maximumTrackTintColor={"grey"}
-                                    thumbTintColor={this.props.color}
+                                    thumbImage={this.props.color == "#00f2ff" ? require("../images/circleTurquoiseSmall.png") : require("../images/circleOrangeSmall.png") }
                                 />
                             </View>
                         </View>
@@ -485,6 +514,7 @@ const styles = StyleSheet.create({
     },
     eqSlider: {
         width: "100%",
+        paddingHorizontal: Platform.OS == "ios" ? 11: 0,
     },
     eqTextContainer: {
         margin: 10,

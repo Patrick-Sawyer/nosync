@@ -1,12 +1,13 @@
 import { StatusBar } from 'expo-status-bar';
 import React, { Component} from 'react';
-import { SafeAreaView, StyleSheet, Text, View } from 'react-native';
+import { Platform, SafeAreaView, StyleSheet, Text, View } from 'react-native';
 import Constants from "expo-constants";
 import Slider from '@react-native-community/slider';
 import * as MediaLibrary from 'expo-media-library';
 import MusicInfo from 'expo-music-info';
 
 import Deck from "./app/components/Deck";
+import { Colors } from 'react-native/Libraries/NewAppScreen';
 
 const colors = ["#00f2ff", "#ff9500", "#2a282b", "#322f33"]
 
@@ -16,6 +17,7 @@ export default class App extends Component {
     userTunes: [],
     deckAVolume: 0.70,
     deckBVolume: 0.70,
+    crossfadeValue: 0,
   }
 
   async getTunes(lastId) {
@@ -23,6 +25,7 @@ export default class App extends Component {
       mediaType: MediaLibrary.MediaType.audio,
       first: 1000,
     })
+    console.log(media);
     let filteredMedia = media.assets.filter((tune) => {
       if(tune.duration > 60){
         return true;
@@ -60,13 +63,15 @@ export default class App extends Component {
   }
 
   androidStatusBarPadding = () => {
-    return (
-      <View
-        style={{
-          height: Constants.statusBarHeight,
-          }}
-      ></View>
-    )
+    if(Platform.OS == "android"){
+      return (
+        <View
+          style={{
+            height: Constants.statusBarHeight,
+            }}
+        ></View>
+      )
+    }
   }
 
   lineBreak = () => {
@@ -99,23 +104,29 @@ export default class App extends Component {
               <View style={{flexShrink: 1}}>
                 <Text style={{textAlign: "center", color: "grey", fontSize: 15}}>X-Fade</Text>
               </View>
-              <View style={{flexGrow: 1, width: "100%", justifyContent: "center"}}>
-                <Slider
-                  style={{width: "100%", height: 20}}
-                  minimumValue={-1}
-                  maximumValue={1}
-                  value={0}
-                  minimumTrackTintColor={"rgba(0,0,0,0)"}
-                  maximumTrackTintColor={"grey"}
-                  thumbTintColor={colors[1]}
-                  onValueChange={(value) => {
-                    this.logarithmicCrossfade(value)
-                  }}
-                  onSlidingComplete={(value) => {
-                    this.logarithmicCrossfade(value)
-                  }}
-                  thumbImage={require("./app/images/circleOrange.png")}
-                />
+              <View style={{flexDirection: "column", flexGrow: 1, width: "100%"}}>
+                <View style={{flexGrow: 1, width: "100%", justifyContent: "center", zIndex: 2 }}>
+                  <Slider
+                    style={{width: "100%", height: 20}}
+                    minimumValue={-1}
+                    maximumValue={1}
+                    value={0}
+                    minimumTrackTintColor={"rgba(0,0,0,0)"}
+                    maximumTrackTintColor={"rgba(0,0,0,0)"}
+                    thumbTintColor={colors[1]}
+                    onValueChange={(value) => {
+                        this.logarithmicCrossfade(value)
+                      
+                    }}
+                    onSlidingComplete={(value) => {
+                      this.logarithmicCrossfade(value);
+                    }}
+                    thumbImage={require("./app/images/circleOrange.png")}
+                  />
+                </View>
+                <View style={{flexGrow: 1, width: "100%", justifyContent: "center", position: "absolute", top: 0, bottom: 0, left: 0, right: 0, alignItems: "center", paddingHorizontal: 16}}>
+                    <View style={{height: 4, borderRadius: 1, width: "100%", zIndex: 0, backgroundColor: "grey" }} />
+                </View>
               </View>
             </View>
           </View>

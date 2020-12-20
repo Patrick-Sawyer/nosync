@@ -383,7 +383,7 @@ class Deck extends Component {
                     <View style={[styles.Component, styles.mainElement, { flex: 1, flexDirection: "row" }]}>
                         <View style={styles.eqComponent}>
                             <View style={styles.eqTextContainer}>
-                                <Text style={styles.eqText}>
+                                <Text adjustsFontSizeToFit style={styles.eqText}>
                                     Low
                                 </Text>
                             </View>
@@ -401,7 +401,7 @@ class Deck extends Component {
                         </View>
                         <View style={styles.eqComponent}>
                             <View style={styles.eqTextContainer}>
-                            <Text style={styles.eqText}>
+                            <Text adjustsFontSizeToFit style={styles.eqText}>
                                     Mid
                                 </Text>
                             </View>
@@ -419,7 +419,7 @@ class Deck extends Component {
                         </View>
                         <View style={styles.eqComponent}>
                             <View style={styles.eqTextContainer}>
-                                <Text style={styles.eqText}>
+                                <Text adjustsFontSizeToFit style={styles.eqText}>
                                     Hi
                                 </Text>
                             </View>
@@ -486,14 +486,17 @@ const styles = StyleSheet.create({
     eqText: {
         color: "grey",
         fontSize: 15,
+        minHeight: 15,
     },
     eqSlider: {
         width: "100%",
         paddingHorizontal: Platform.OS == "ios" ? 11: 0,
         maxWidth: 150,
+        
     },
     eqTextContainer: {
         margin: 10,
+        overflow: "visible"
     }
 })
 

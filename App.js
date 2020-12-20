@@ -7,7 +7,6 @@ import * as MediaLibrary from 'expo-media-library';
 import MusicInfo from 'expo-music-info';
 
 import Deck from "./app/components/Deck";
-import { Colors } from 'react-native/Libraries/NewAppScreen';
 
 const colors = ["#00f2ff", "#ff9500", "#2a282b", "#322f33"]
 
@@ -24,8 +23,9 @@ export default class App extends Component {
     let media = await MediaLibrary.getAssetsAsync({
       mediaType: MediaLibrary.MediaType.audio,
       first: 1000,
+      sortBy: [MediaLibrary.SortBy.creationTime],
     })
-    console.log(Platform.OS)
+    // console.log(Platform.OS)
     console.log(media)
     let filteredMedia = media.assets.filter((tune) => {
       if(tune.duration > 60){

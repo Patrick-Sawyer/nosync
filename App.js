@@ -20,11 +20,9 @@ export default class App extends Component {
   }
 
   async getTunes(lastId) {
-    let media = await MediaLibrary.getAssetsAsync({
-      mediaType: MediaLibrary.MediaType.audio,
-      first: 1000,
-      sortBy: [MediaLibrary.SortBy.creationTime],
-    })
+    const media = await MediaLibrary.getAssetsAsync({
+        mediaType: MediaLibrary.MediaType.audio,
+    });
     // console.log(Platform.OS)
     console.log(media)
     let filteredMedia = media.assets.filter((tune) => {
